@@ -1,0 +1,33 @@
+name: CI Docker Build Workflow
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build-job:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Create Test File
+        run: |
+          touch generated-by-action.txt
+          echo "Created at $(date)" > generated-by-action.txt
+          ls -la
+
+      - name: Verify Docker Installation
+        run: docker --version
+
+      - name: Build Docker Image
+        run: |
+          docker build -t my-custom-app:v1 .
+
+      - name: Test Run Docker Container
+        run: |
+          docker run --rm my-custom-app:v1
