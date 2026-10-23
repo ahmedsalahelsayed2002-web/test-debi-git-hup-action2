@@ -1,4 +1,4 @@
-name: CI Docker Build and Push
+name: CI Workflow
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-and-push:
+  build-job:
     runs-on: ubuntu-latest
 
     steps:
@@ -24,19 +24,16 @@ jobs:
       - name: Verify Docker Installation
         run: docker --version
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Build and Push Docker Image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          push: true
-          tags: ahmedsalahelsayed/testdepi:devolp
+      - name: Build Docker Image
+        run: |
+          docker build -t my-custom-app:v1 .
 
       - name: Test Run Docker Container
         run: |
-          docker run --rm ahmedsalahelsayed/testdepi:devolp
+          docker run --rm my-custom-app:v1
+
+      - name: Docker Login and Push
+        run: |
+          sudo docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          sudo docker tag ${{ environment.DOCKER_REGISTRY }}/my-nginx-image:v1.$GITHUB_RUN_NUMBER ${{ environment.DOCKER_REGISTRY }}/my-nginx-image:latest
+          sudo docker push ${{ environment.DOCKER_REGISTRY }}/my-nginx-image:latest
