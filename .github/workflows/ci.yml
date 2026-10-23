@@ -2,9 +2,9 @@ name: CI Docker Build Workflow
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "devolp" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "devolp" ]
   workflow_dispatch:
 
 jobs:
@@ -26,8 +26,8 @@ jobs:
 
       - name: Build Docker Image
         run: |
-          docker build -t my-custom-app:v1 .
+          docker build -t my-custom-app:devolp .
 
       - name: Test Run Docker Container
         run: |
-          docker run --rm my-custom-app:v1
+          docker run --rm my-custom-app:devolp
